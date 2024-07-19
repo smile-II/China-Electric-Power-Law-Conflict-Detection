@@ -29,6 +29,9 @@
         .form-group label {
             font-weight: bold;
         }
+        textarea.form-control {
+            resize: vertical; 
+        }
     </style>
 </head>
 <body>
@@ -37,7 +40,7 @@
         <form id="searchForm">
             <div class="form-group">
                 <label for="query">输入查询内容:</label>
-                <input type="text" class="form-control" id="query" placeholder="例如：电力供应">
+                <textarea class="form-control" id="query" rows="3" placeholder="例如：中华人民共和国电力法"></textarea>
             </div>
             <button type="submit" class="btn btn-primary btn-block">搜索</button>
         </form>
