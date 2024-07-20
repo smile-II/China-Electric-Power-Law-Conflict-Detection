@@ -32,6 +32,17 @@
         textarea.form-control {
             resize: vertical; 
         }
+        #loadingSpinner {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+        }
+        #timeTaken {
+            margin-top: 20px;
+            font-size: 1rem;
+            color: #555;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -40,29 +51,55 @@
         <form id="searchForm">
             <div class="form-group">
                 <label for="query">输入查询内容:</label>
-                <textarea class="form-control" id="query" rows="3" placeholder="例如：中华人民共和国电力法"></textarea>
+                <textarea class="form-control" id="query" rows="3" placeholder="例如：电力供应、使用双方根据平等自愿、协商一致的原则签订供用电合同"></textarea>
             </div>
             <button type="submit" class="btn btn-primary btn-block">搜索</button>
         </form>
+        <div id="loadingSpinner" class="spinner-border text-primary" role="status">
+            <span class="sr-only">正在加载...</span>
+        </div>
+        <div id="timeTaken">查询时间: <span id="elapsedTime">0.0000</span> 秒</div>
         <div id="results" class="result"></div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script>
+        function startTimer() {
+            var startTime = new Date().getTime();
+            return function() {
+                var endTime = new Date().getTime();
+                return ((endTime - startTime) / 1000).toFixed(4);
+            };
+        }
+
         $(document).ready(function(){
             $('#searchForm').on('submit', function(event){
                 event.preventDefault();
                 var query = $('#query').val();
+                $('#results').empty();
+                $('#timeTaken').hide();
+                $('#loadingSpinner').show(); // 显示加载器
+
+                var getTimeElapsed = startTimer();
+                $('#timeTaken').show(); // 显示时间计数器
+
+                var interval = setInterval(function() {
+                    var timeElapsed = getTimeElapsed();
+                    $('#elapsedTime').text(timeElapsed);
+                }, 100); // 每100毫秒更新一次
+
                 $.ajax({
                     url: '/search',
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify({query: query}),
                     success: function(response){
+                        clearInterval(interval); // 停止计时器
+                        $('#loadingSpinner').hide(); // 隐藏加载器
                         var resultsDiv = $('#results');
                         resultsDiv.empty();
-                        if(response.length > 0) {
-                            response.forEach(function(result){
+                        if(response.results.length > 0) {
+                            response.results.forEach(function(result){
                                 resultsDiv.append(
                                     '<div class="card">' +
                                     '<div class="card-body">' +
@@ -82,8 +119,14 @@
                         } else {
                             resultsDiv.append('<p class="text-muted">没有找到相关的法律条文。</p>');
                         }
+
+                        // 最后一次更新总时间
+                        var timeElapsed = getTimeElapsed();
+                        $('#elapsedTime').text(timeElapsed);
                     },
                     error: function(){
+                        clearInterval(interval); // 停止计时器
+                        $('#loadingSpinner').hide(); // 隐藏加载器
                         $('#results').empty().append('<p class="text-danger">查询失败，请重试。</p>');
                     }
                 });

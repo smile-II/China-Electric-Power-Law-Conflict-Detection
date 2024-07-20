@@ -1,26 +1,53 @@
-import json
 import pickle
-from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
+from concurrent.futures import ThreadPoolExecutor
+import time
+from sentence_transformers import SentenceTransformer
 
-def retrieve(query, model_file, data_file):
+def vectorize_query(query, model):
+    start_time = time.time()
+    query_embedding = model.encode([query])[0]
+    vectorize_time = time.time() - start_time
+    return query_embedding, vectorize_time
+
+def calculate_similarities(embeddings, query_embedding):
+    start_time = time.time()
+    similarities = np.dot(embeddings, query_embedding) / (np.linalg.norm(embeddings, axis=1) * np.linalg.norm(query_embedding))
+    similarity_time = time.time() - start_time
+    return similarities, similarity_time
+
+def sort_results(similarities, documents, top_k):
+    start_time = time.time()
+    top_k_indices = similarities.argsort()[-top_k:][::-1]
+    top_k_documents = [documents[idx] for idx in top_k_indices]
+    sort_time = time.time() - start_time
+    return top_k_documents, sort_time
+
+def retrieve(query, model, model_file, data_file, top_k=10):
+    # 加载索引模型
     with open(model_file, 'rb') as f:
-        vectorizer, X = pickle.load(f)
-    
-    with open(data_file, 'r', encoding='utf-8') as f:
-        documents = [json.loads(line) for line in f]
-    
-    query_vec = vectorizer.transform([query])
-    similarities = cosine_similarity(query_vec, X).flatten()
-    top_indices = similarities.argsort()[-5:][::-1]  # 返回前5个最相似的文档索引
-    
-    results = [documents[i] for i in top_indices]
-    return results
+        embeddings, documents = pickle.load(f)
+
+    # 使用线程池进行并行化处理
+    with ThreadPoolExecutor() as executor:
+        future_query_embedding = executor.submit(vectorize_query, query, model)
+        query_embedding, vectorize_time = future_query_embedding.result()
+
+        future_similarities = executor.submit(calculate_similarities, embeddings, query_embedding)
+        similarities, similarity_time = future_similarities.result()
+
+        future_results = executor.submit(sort_results, similarities, documents, top_k)
+        top_k_documents, sort_time = future_results.result()
+
+    return top_k_documents, vectorize_time, similarity_time, sort_time
 
 if __name__ == "__main__":
-    query = "电力供应、使用双方根据平等自愿、协商一致的原则签订供用电合同，确定双方的权利和义务，明确约定产权分界、供用电设施维护责任的划分、违约责任等。"  # 示例查询
-    model_file = "models/vectorizer.pkl"
+    
+    query = "电力供应、使用双方根据平等自愿、协商一致的原则签订供用电合同。"  # 示例查询
+    model = SentenceTransformer('all-MiniLM-L6-v2')
+    model_file = "models/vectorizer_minilm.pkl"
     data_file = "data/processed/electricity_laws.json"
-    results = retrieve(query, model_file, data_file)
+    results, vectorize_time, similarity_time, sort_time = retrieve(query, model, model_file, data_file, top_k=10)
     for result in results:
         print(f"Title: {result['title']}")
         print(f"Content: {result['content']}\n")
