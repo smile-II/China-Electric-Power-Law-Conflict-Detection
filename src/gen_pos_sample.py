@@ -4,7 +4,7 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification, pipe
 import torch
 from sentence_transformers import SentenceTransformer
 from retriever import retrieve
-client = OpenAI(api_key="sk-9a58fb2932634704bac709c2dc26ab50", base_url="https://api.deepseek.com")
+client = OpenAI(api_key="xxx", base_url="https://api.deepseek.com")
 
 def chat_with_model(input_text, temperature=1.25):
     # 调用OpenAI API的chat接口

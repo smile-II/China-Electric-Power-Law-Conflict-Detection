@@ -1,5 +1,5 @@
 from openai import OpenAI
-client = OpenAI(api_key="sk-9a58fb2932634704bac709c2dc26ab50", base_url="https://api.deepseek.com")
+client = OpenAI(api_key="xxx", base_url="https://api.deepseek.com")
 import json
 import random
 from sklearn.feature_extraction.text import TfidfVectorizer
