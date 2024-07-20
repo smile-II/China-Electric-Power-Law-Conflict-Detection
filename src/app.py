@@ -5,7 +5,7 @@ from sentence_transformers import SentenceTransformer
 app = Flask(__name__)
 
 # 提前加载模型
-model = SentenceTransformer('all-MiniLM-L6-v2')
+model = SentenceTransformer('moka-ai/m3e-base')
 
 @app.route('/')
 def index():
@@ -14,7 +14,7 @@ def index():
 @app.route('/search', methods=['POST'])
 def search():
     query = request.json.get('query')
-    results, vectorize_time, similarity_time, sort_time = retrieve(query, model, "models/vectorizer_minilm.pkl", "data/processed/electricity_laws.json")
+    results, vectorize_time, similarity_time, sort_time = retrieve(query, model, "models/vectorizer.pkl", "data/processed/electricity_laws.json")
     return jsonify({
         "results": results,
         "vectorize_time": vectorize_time,
