@@ -6,25 +6,26 @@
     <title>法律条文查询</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body {
-            background-color: #f7f7f7;
-            padding-top: 20px;
+        body, html {
+            height: 100%;
             margin: 0;
             font-family: 'Arial', sans-serif;
         }
+        body {
+            background-color: #f7f7f7;
+            padding-top: 20px;
+        }
         .container {
             display: flex;
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: calc(100vh - 20px);
+            height: calc(100% - 20px);
         }
         .left-panel {
-            width: 35%;
+            width: 40%;
+            background-color: white;
             padding: 20px;
-            border-right: 1px solid #ddd;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
             justify-content: center;
