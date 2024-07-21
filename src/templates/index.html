@@ -133,14 +133,14 @@
                                 var queryResult = 
                                     '<div class="card">' +
                                     '<div class="card-body">' +
-                                    '<h5 class="card-title">句子 ' + (index + 1) + ':</h5>' +
-                                    '<p class="card-text">' + result.query + '</p>';
+                                    '<h5 class="card-title">查询内容 ' + (index + 1) + ':</h5>' +
+                                    '<p class="card-text"><strong>' + result.query + '</strong></p>';
                                 queryResult += '<div class="list-group">';
                                 result.results.forEach(function(res) {
                                     queryResult += 
                                         '<div class="list-group-item">' +
                                         '<h5 class="card-title">' + res.title + '</h5>' +
-                                        '<p class="card-text">' + res.content + '</p>' +
+                                        '<p class="card-text"><strong>' + res.content + '</strong></p>' +
                                         '<small class="text-muted">' +
                                         '类型: ' + res.type + ' | ' +
                                         '状态: ' + res.status + ' | ' +
