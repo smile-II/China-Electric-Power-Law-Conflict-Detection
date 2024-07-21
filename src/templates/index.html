@@ -65,6 +65,10 @@
             color: #555;
             text-align: center;
         }
+        textarea.form-control {
+            resize: none;
+            height: 300px; /* 增加高度 */
+        }
     </style>
 </head>
 <body>
@@ -74,7 +78,7 @@
             <form id="searchForm">
                 <div class="form-group">
                     <label for="query">输入查询内容:</label>
-                    <textarea class="form-control" id="query" rows="6" placeholder="例如：电力供应、使用双方根据平等自愿、协商一致的原则签订供用电合同"></textarea>
+                    <textarea class="form-control" id="query" placeholder="例如：电力供应、使用双方根据平等自愿、协商一致的原则签订供用电合同"></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">搜索</button>
             </form>
