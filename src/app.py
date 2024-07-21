@@ -12,14 +12,14 @@ model = SentenceTransformer('moka-ai/m3e-base')
 def index():
     return render_template("index.html")
 
-@app.route('/search', methods=['POST'])
+@app.route('/search', methods=['POST']) #定义一个POST请求的路由，处理搜索请求。
 def search():
     query = request.json.get('query')
     query_list = split_into_sentences(query)
     
     results_list = []
     for query in query_list:
-        results, vectorize_time, similarity_time, sort_time = retrieve(query, model, "models/vectorizer.pkl", "data/processed/electricity_laws.json")
+        results, vectorize_time, similarity_time, sort_time = retrieve(query, model, "models/vectorizer.pkl", "data/processed/electricity_laws.json",top_k=5)
         results_list.append({
             "query": query,
             "results": results,
