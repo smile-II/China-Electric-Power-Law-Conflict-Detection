@@ -130,27 +130,28 @@
                         resultsDiv.empty();
                         if(response.length > 0) {
                             response.forEach(function(result, index){
-                                resultsDiv.append(
+                                var queryResult = 
                                     '<div class="card">' +
                                     '<div class="card-body">' +
                                     '<h5 class="card-title">句子 ' + (index + 1) + ':</h5>' +
-                                    '<h6 class="card-subtitle mb-2 text-muted">查询内容:</h6>' +
-                                    '<p class="card-text">' + result.query + '</p>' +
-                                    '<h6 class="card-subtitle mb-2 text-muted">检索结果:</h6>' +
-                                    result.results.map(function(res) {
-                                        return (
-                                            '<p class="card-text"><strong>标题:</strong> ' + res.title + '<br>' +
-                                            '<strong>内容:</strong> ' + res.content + '<br>' +
-                                            '<strong>类型:</strong> ' + res.type + ' | ' +
-                                            '<strong>状态:</strong> ' + res.status + ' | ' +
-                                            '<strong>发布日期:</strong> ' + res.publish_date + ' | ' +
-                                            '<strong>生效日期:</strong> ' + res.effective_date + ' | ' +
-                                            '<strong>发布机构:</strong> ' + res.office + '</p>'
-                                        );
-                                    }).join('') +
-                                    '</div>' +
-                                    '</div>'
-                                );
+                                    '<p class="card-text">' + result.query + '</p>';
+                                queryResult += '<div class="list-group">';
+                                result.results.forEach(function(res) {
+                                    queryResult += 
+                                        '<div class="list-group-item">' +
+                                        '<h5 class="card-title">' + res.title + '</h5>' +
+                                        '<p class="card-text">' + res.content + '</p>' +
+                                        '<small class="text-muted">' +
+                                        '类型: ' + res.type + ' | ' +
+                                        '状态: ' + res.status + ' | ' +
+                                        '发布日期: ' + res.publish_date + ' | ' +
+                                        '生效日期: ' + res.effective_date + ' | ' +
+                                        '发布机构: ' + res.office + 
+                                        '</small>' +
+                                        '</div>';
+                                });
+                                queryResult += '</div></div></div>';
+                                resultsDiv.append(queryResult);
                             });
                         } else {
                             resultsDiv.append('<p class="text-muted">没有找到相关的法律条文。</p>');
