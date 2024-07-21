@@ -98,20 +98,26 @@
                         $('#loadingSpinner').hide(); // 隐藏加载器
                         var resultsDiv = $('#results');
                         resultsDiv.empty();
-                        if(response.results.length > 0) {
-                            response.results.forEach(function(result){
+                        if(response.length > 0) {
+                            response.forEach(function(result, index){
                                 resultsDiv.append(
                                     '<div class="card">' +
                                     '<div class="card-body">' +
-                                    '<h5 class="card-title">' + result.title + '</h5>' +
-                                    '<p class="card-text"><strong>内容:</strong> ' + result.content + '</p>' +
-                                    '<p class="card-subtitle">' +
-                                    '<strong>类型:</strong> ' + result.type + ' | ' +
-                                    '<strong>状态:</strong> ' + result.status + ' | ' +
-                                    '<strong>发布日期:</strong> ' + result.publish_date + ' | ' +
-                                    '<strong>生效日期:</strong> ' + result.effective_date + ' | ' +
-                                    '<strong>发布机构:</strong> ' + result.office +
-                                    '</p>' +
+                                    '<h5 class="card-title">句子 ' + (index + 1) + ':</h5>' +
+                                    '<h6 class="card-subtitle mb-2 text-muted">查询内容:</h6>' +
+                                    '<p class="card-text">' + result.query + '</p>' +
+                                    '<h6 class="card-subtitle mb-2 text-muted">检索结果:</h6>' +
+                                    result.results.map(function(res) {
+                                        return (
+                                            '<p class="card-text"><strong>标题:</strong> ' + res.title + '<br>' +
+                                            '<strong>内容:</strong> ' + res.content + '<br>' +
+                                            '<strong>类型:</strong> ' + res.type + ' | ' +
+                                            '<strong>状态:</strong> ' + res.status + ' | ' +
+                                            '<strong>发布日期:</strong> ' + res.publish_date + ' | ' +
+                                            '<strong>生效日期:</strong> ' + res.effective_date + ' | ' +
+                                            '<strong>发布机构:</strong> ' + res.office + '</p>'
+                                        );
+                                    }).join('') +
                                     '</div>' +
                                     '</div>'
                                 );
