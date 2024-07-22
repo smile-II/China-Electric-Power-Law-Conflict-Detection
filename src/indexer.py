@@ -3,9 +3,6 @@ import pickle
 from sentence_transformers import SentenceTransformer
 
 def build_index(input_file, output_model):
-    # 加载 all-MiniLM-L6-v2 模型
-    model = SentenceTransformer('moka-ai/m3e-base')
-    
     # 读取文档内容
     with open(input_file, 'r', encoding='utf-8') as f:
         documents = [json.loads(line) for line in f]
@@ -21,4 +18,5 @@ def build_index(input_file, output_model):
 if __name__ == "__main__":
     input_file = "data/processed/electricity_laws.json"
     output_model = "models/vectorizer.pkl"
+    model = SentenceTransformer('moka-ai/m3e-base')
     build_index(input_file, output_model)

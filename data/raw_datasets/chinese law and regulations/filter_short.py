@@ -39,6 +39,6 @@ def filter_and_split_legal_items(input_file, output_file, min_length=20):
     print(f"过滤和拆分后的法律条目已保存为 {output_file}")
 
 if __name__ == "__main__":
-    input_file = "data/processed/filtered_electricity_laws.json"  # 输入文件路径
-    output_file = "data/processed/electricity_laws.json"  # 输出文件路径
+    input_file = r"D:\project\legal\data\raw_datasets\chinese law and regulations\combined_laws_transformed_split.json"   # 输入文件路径
+    output_file = r"D:\project\legal\data\raw_datasets\chinese law and regulations\combined_laws_transformed_split_filter_short.json"   # 输出文件路径
     filter_and_split_legal_items(input_file, output_file)
