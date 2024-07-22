@@ -57,7 +57,7 @@ legal_text_retrieval/
 
 ### 6. web前端可视化
 
-![前端查询](picture\web.png)
+![前端查询](picture/web.png)
 包括输入查询，检索结果，显示检索时间
 ## 未完成部分
 
