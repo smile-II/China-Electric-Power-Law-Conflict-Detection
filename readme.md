@@ -15,7 +15,7 @@ legal_text_retrieval/
 ├─picture             # 存放图片文件
 └─src                 # 存放源代码文件
     ├─templates       # 存放模板文件
-    └─__pycache__     # 存放Python编译后的字节码文件（由Python自动生成）
+    └─__pycache__     
 
 ```
 ## 项目更新
