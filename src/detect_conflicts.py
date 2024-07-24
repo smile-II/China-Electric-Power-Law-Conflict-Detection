@@ -4,6 +4,8 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
 from retriever import retrieve
 from sentence_transformers import SentenceTransformer
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from tqdm import tqdm
 
 # 加载模型
 print("加载模型中...")
@@ -11,6 +13,8 @@ re_model = SentenceTransformer('moka-ai/m3e-base')
 model_name = 'IDEA-CCNL/Erlangshen-MegatronBert-1.3B-NLI'
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModelForSequenceClassification.from_pretrained(model_name)
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model.to(device)
 print("模型加载完成")
 
 # 定义标签，仅包括“法律文本冲突”和“法律文本不冲突”
@@ -18,7 +22,9 @@ label_map = {0: '法律文本冲突', 1: '法律文本不冲突', 2: '法律文�
 
 def predict_conflict(text1, text2):
     inputs = tokenizer.encode_plus(text1, text2, return_tensors='pt', truncation=True)
-    outputs = model(**inputs)
+    inputs = {key: value.to(device) for key, value in inputs.items()}
+    with torch.no_grad():
+        outputs = model(**inputs)
     logits = outputs.logits
     predicted_label = torch.argmax(logits, dim=1).item()
     return label_map[predicted_label]
@@ -38,34 +44,68 @@ def detect_conflicts(input_law, retrieved_laws):
             results.append(result)
     return results
 
-if __name__ == "__main__":
-    input_file = "data/processed/electricity_laws_20240722_7262.json"
+def process_single_document(doc_index, document, input_file, conflict_output_file, retrieval_output_file):
+    input_law = document['content']
     
-    # 加载输入的法律文档
-    with open(input_file, 'r', encoding='utf-8') as f:
-        documents = [json.loads(line) for line in f]
-    
-    # 假设我们有一个输入的法律文档
-    input_law = "县级以上地方人民政府经济综合主管部门是本行政区域内的电力管理部门，负责电力事业的监督管理。县级以上地方人民政府有关部门在各自的职责范围内负责电力事业的监督管理。"  # 这里使用示例文档内容
-
-    # 开始计时
     start_time = time.time()
-
+    
     # 检索相似的法律文档
-    retrieved_laws, vectorize_time, similarity_time, sort_time = retrieve(input_law, re_model, "models/vectorizer.pkl", input_file, top_k=20)
+    retrieved_laws, vectorize_time, similarity_time, sort_time = retrieve(input_law, re_model, "models/vectorizer.pkl", input_file, top_k=10)
     end_retrieved_time = time.time()
-
+    
     # 检测冲突
-    conflicts = detect_conflicts(input_law, retrieved_laws)
+    conflict_results = detect_conflicts(input_law, retrieved_laws)
     end_conflicts_time = time.time()
 
-    # 输出结果
-    for conflict in conflicts:
-        print(f"索引: {conflict['retrieved_index']} - 标签: {conflict['label']}")
-        print(f"输入文本: {conflict['input_text']}")
-        print(f"检索文本: {conflict['retrieved_text']}\n")
+    conflicts = []
+    retrievals = []
 
-    # 输出时间
-    print(f"检索时间: {end_retrieved_time - start_time} 秒")
-    print(f"冲突检测时间: {end_conflicts_time - end_retrieved_time} 秒")
-    print(f"总时间: {end_conflicts_time - start_time} 秒")
+    # 保存冲突结果
+    for conflict in conflict_results:
+        if conflict['label'] == '法律文本冲突':
+            conflicts.append({
+                "doc_index": doc_index,
+                "conflict": conflict
+            })
+    
+    # 保存检索结果
+    retrievals.append({
+        "doc_index": doc_index,
+        "retrieved_laws": retrieved_laws,
+        "retrieval_time": end_retrieved_time - start_time,
+        "conflict_detection_time": end_conflicts_time - end_retrieved_time,
+        "total_time": end_conflicts_time - start_time
+    })
+    
+    with open(conflict_output_file, 'a', encoding='utf-8') as f:
+        for conflict in conflicts:
+            f.write(json.dumps(conflict, ensure_ascii=False) + '\n')
+    
+    with open(retrieval_output_file, 'a', encoding='utf-8') as f:
+        for retrieval in retrievals:
+            f.write(json.dumps(retrieval, ensure_ascii=False) + '\n')
+
+def process_documents(input_file, conflict_output_file, retrieval_output_file):
+    with open(input_file, 'r', encoding='utf-8') as f:
+        documents = [json.loads(line) for line in f]
+
+    # 清空文件内容
+    open(conflict_output_file, 'w').close()
+    open(retrieval_output_file, 'w').close()
+
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        futures = []
+        for doc_index, document in enumerate(documents):
+            futures.append(executor.submit(process_single_document, doc_index, document, input_file, conflict_output_file, retrieval_output_file))
+        
+        for future in tqdm(as_completed(futures), total=len(futures)):
+            future.result()
+
+if __name__ == "__main__":
+    input_file = "data/processed/electricity_laws_20240722_7262.json"
+    conflict_output_file = "output/conflict_results.json"
+    retrieval_output_file = "output/retrieval_results.json"
+
+    process_documents(input_file, conflict_output_file, retrieval_output_file)
+    print(f"冲突检测结果已保存到 {conflict_output_file}")
+    print(f"检索结果已保存到 {retrieval_output_file}")
