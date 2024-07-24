@@ -7,11 +7,12 @@ from sentence_transformers import SentenceTransformer
 
 # 加载模型
 print("加载模型中...")
-re_model = SentenceTransformer('all-MiniLM-L6-v2')
-model_name = 'roberta-large-mnli'
+re_model = SentenceTransformer('moka-ai/m3e-base')
+model_name = 'IDEA-CCNL/Erlangshen-MegatronBert-1.3B-NLI'
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModelForSequenceClassification.from_pretrained(model_name)
 print("模型加载完成")
+
 
 # 定义标签，仅包括“法律文本冲突”和“法律文本不冲突”
 label_map = {0: '法律文本冲突', 1: '法律文本不冲突', 2: '法律文本不冲突'}
@@ -39,7 +40,7 @@ def detect_conflicts(input_law, retrieved_laws):
     return results
 
 if __name__ == "__main__":
-    input_file = "data/processed/electricity_laws.json"
+    input_file = "data/processed/electricity_laws_20240722_7262.json"
     
     # 加载输入的法律文档
     with open(input_file, 'r', encoding='utf-8') as f:
@@ -52,7 +53,7 @@ if __name__ == "__main__":
     start_time = time.time()
 
     # 检索相似的法律文档
-    retrieved_laws, vectorize_time, similarity_time, sort_time = retrieve(input_law, re_model, "models/vectorizer_minilm.pkl", input_file)
+    retrieved_laws, vectorize_time, similarity_time, sort_time = retrieve(input_law, re_model, "models/vectorizer.pkl", input_file)
     end_retrieved_time = time.time()
 
     # 检测冲突
@@ -63,7 +64,7 @@ if __name__ == "__main__":
     for conflict in conflicts:
         print(f"索引: {conflict['retrieved_index']} - 标签: {conflict['label']}")
         print(f"输入文本: {conflict['input_text']}")
-        print(f"检索文本: {conflict['retrieved_text']}\n")
+        print(f"检索文本: {conflict['retrieved_text']}/n")
 
     # 输出时间
     print(f"检索时间: {end_retrieved_time - start_time} 秒")

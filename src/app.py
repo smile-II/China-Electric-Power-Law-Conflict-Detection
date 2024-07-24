@@ -19,7 +19,7 @@ def search():
     
     results_list = []
     for query in query_list:
-        results, vectorize_time, similarity_time, sort_time = retrieve(query, model, "models/vectorizer.pkl", "data/processed/electricity_laws.json",top_k=5)
+        results, vectorize_time, similarity_time, sort_time = retrieve(query, model, "models/vectorizer.pkl", "data/processed/electricity_laws.json",top_k=15)
         results_list.append({
             "query": query,
             "results": results,
