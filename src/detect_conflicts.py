@@ -6,7 +6,7 @@ from retriever import retrieve
 from sentence_transformers import SentenceTransformer
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from tqdm import tqdm
-
+import re
 # 加载模型
 print("加载模型中...")
 re_model = SentenceTransformer('moka-ai/m3e-base')
@@ -33,9 +33,11 @@ def detect_conflicts(input_law, retrieved_laws):
     results = []
     for index, law in enumerate(retrieved_laws):
         if isinstance(law, dict) and 'content' in law:
-            label = predict_conflict(input_law, law['content'])
+            # 预处理，删除前面的第XX条之类的内容
+            preprocessed_input_law = re.sub(r'^第[一二三四五六七八九十百千万\d]+条\s*', '', input_law)
+            preprocessed_retrieved_text = re.sub(r'^第[一二三四五六七八九十百千万\d]+条\s*', '', law['content'])
+            label = predict_conflict(preprocessed_input_law, preprocessed_retrieved_text)
             result = {
-                "input_index": index,
                 "input_text": input_law,
                 "retrieved_index": index,
                 "retrieved_text": law['content'],
@@ -71,12 +73,26 @@ def process_single_document(doc_index, document, input_file, conflict_output_fil
     # 保存检索结果
     retrievals.append({
         "doc_index": doc_index,
-        "retrieved_laws": retrieved_laws,
+        "retrieved_laws": [
+            {
+                "index": i,
+                "publish_date": law.get("publish_date", ""),
+                "effective_date": law.get("effective_date", ""),
+                "type": law.get("type", ""),
+                "status": law.get("status", ""),
+                "title": law.get("title", ""),
+                "office": law.get("office", ""),
+                "office_category": law.get("office_category", ""),
+                "effective_period": law.get("effective_period", ""),
+                "content": law.get("content", "").replace("\n", " ")  # 删除可能存在的换行符
+            }
+            for i, law in enumerate(retrieved_laws)
+        ],
         "retrieval_time": end_retrieved_time - start_time,
         "conflict_detection_time": end_conflicts_time - end_retrieved_time,
         "total_time": end_conflicts_time - start_time
     })
-    
+
     with open(conflict_output_file, 'a', encoding='utf-8') as f:
         for conflict in conflicts:
             f.write(json.dumps(conflict, ensure_ascii=False) + '\n')
