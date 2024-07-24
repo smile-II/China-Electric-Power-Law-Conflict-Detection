@@ -13,7 +13,6 @@ tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModelForSequenceClassification.from_pretrained(model_name)
 print("模型加载完成")
 
-
 # 定义标签，仅包括“法律文本冲突”和“法律文本不冲突”
 label_map = {0: '法律文本冲突', 1: '法律文本不冲突', 2: '法律文本不冲突'}
 
@@ -47,13 +46,13 @@ if __name__ == "__main__":
         documents = [json.loads(line) for line in f]
     
     # 假设我们有一个输入的法律文档
-    input_law = "电力供应、使用双方根据平等自愿、协商一致的原则签订供用电合同。"  # 这里使用示例文档内容
+    input_law = "县级以上地方人民政府经济综合主管部门是本行政区域内的电力管理部门，负责电力事业的监督管理。县级以上地方人民政府有关部门在各自的职责范围内负责电力事业的监督管理。"  # 这里使用示例文档内容
 
     # 开始计时
     start_time = time.time()
 
     # 检索相似的法律文档
-    retrieved_laws, vectorize_time, similarity_time, sort_time = retrieve(input_law, re_model, "models/vectorizer.pkl", input_file)
+    retrieved_laws, vectorize_time, similarity_time, sort_time = retrieve(input_law, re_model, "models/vectorizer.pkl", input_file, top_k=20)
     end_retrieved_time = time.time()
 
     # 检测冲突
@@ -64,7 +63,7 @@ if __name__ == "__main__":
     for conflict in conflicts:
         print(f"索引: {conflict['retrieved_index']} - 标签: {conflict['label']}")
         print(f"输入文本: {conflict['input_text']}")
-        print(f"检索文本: {conflict['retrieved_text']}/n")
+        print(f"检索文本: {conflict['retrieved_text']}\n")
 
     # 输出时间
     print(f"检索时间: {end_retrieved_time - start_time} 秒")
