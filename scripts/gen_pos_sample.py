@@ -4,6 +4,8 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification, pipe
 import torch
 from sentence_transformers import SentenceTransformer
 from retriever import retrieve
+from openai import OpenAI
+
 client = OpenAI(api_key="your key", base_url="https://api.deepseek.com")
 
 def chat_with_model(input_text, temperature=1.25):
