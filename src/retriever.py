@@ -43,10 +43,10 @@ def retrieve(query, model, model_file, data_file, top_k=20):
 
 if __name__ == "__main__":
     
-    query = "电力供应、使用双方根据平等自愿、协商一致的原则签订供用电合同。"  # 示例查询
+    query = "第三十八条 电力主管部门工作人员滥用职权、徇私舞弊的，由其单位或者上级主管部门给予行政处分。"  # 示例查询
     re_model = SentenceTransformer('moka-ai/m3e-base')
-    model_file = "models/vectorizer.pkl"
-    data_file = "data\processed\electricity_laws_20240722_7262.json"
+    model_file = "models/vectorizer_electricity_laws_20240730_2970.pkl"
+    data_file = "data\processed\electricity_laws_20240730_2970.json"
     results, vectorize_time, similarity_time, sort_time = retrieve(query, re_model, model_file, data_file)
     for result in results:
         print(f"Title: {result['title']}")
