@@ -16,7 +16,7 @@ def build_index(input_file, output_model):
         pickle.dump((embeddings, documents), f)
 
 if __name__ == "__main__":
-    input_file = "data\processed\electricity_laws_20240722_7262.json"
-    output_model = "models/vectorizer.pkl"
+    input_file = "data\processed\electricity_laws_20240730_2970.json"
+    output_model = "models/vectorizer_electricity_laws_20240730_2970.pkl"
     model = SentenceTransformer('moka-ai/m3e-base')
     build_index(input_file, output_model)
