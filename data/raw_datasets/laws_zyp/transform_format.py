@@ -10,7 +10,6 @@ def transform_format(old_data):
         "status": old_data.get("status"),
         "title": old_data.get("title"),
         "office": old_data.get("office"),
-        # "office_level": old_data.get("office_level"), #没有
         "office_category": old_data.get("office_category"),
         "effective_period": old_data.get("effective_period"),
         "content": old_data.get("content")
