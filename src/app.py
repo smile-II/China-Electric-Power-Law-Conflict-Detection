@@ -7,6 +7,8 @@ app = Flask(__name__)
 
 # 提前加载模型
 model = SentenceTransformer('moka-ai/m3e-base')
+model_pkl = "models/vectorizer_electricity_laws_20240730_2862.pkl"
+input_file = "data/processed/electricity_laws_20240730_2862.json"
 
 @app.route('/')
 def index():
@@ -19,7 +21,7 @@ def search():
     
     results_list = []
     for query in query_list:
-        results, vectorize_time, similarity_time, sort_time = retrieve(query, model, "models/vectorizer.pkl", "data/processed/electricity_laws.json",top_k=15)
+        results, vectorize_time, similarity_time, sort_time = retrieve(query, model, model_pkl, input_file ,top_k=15)
         results_list.append({
             "query": query,
             "results": results,
