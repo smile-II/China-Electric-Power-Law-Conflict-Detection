@@ -128,10 +128,10 @@ def process_documents(input_file, conflict_output_file, retrieval_output_file, r
                 print(f"文档索引 {doc_index} 处理失败: {e}")
 
 if __name__ == "__main__":
-    input_file = "data/processed/electricity_laws_20240730_2862.json"
-    conflict_output_file = "output/conflict_results.json"
-    retrieval_output_file = "output/retrieval_results.json"
-    model_file = "models/vectorizer_electricity_laws_20240730_2862.pkl"
+    input_file = "D:\project\legal\data\processed\Shanghai_Electric_Power_Company_Internal_Policy_Document_20240812.json"
+    conflict_output_file = "output/Shanghai_Electric_Power_Company_Internal_Policy_Document/conflict_results.json"
+    retrieval_output_file = "output/Shanghai_Electric_Power_Company_Internal_Policy_Document/retrieval_results.json"
+    model_file = "models/Shanghai_Enterprise_Compliance_Analysis_Upper_Level_Legal_Database_20240812"
     process_documents(input_file, conflict_output_file, retrieval_output_file, re_model, model_file)
     print(f"冲突检测结果已保存到 {conflict_output_file}")
     print(f"检索结果已保存到 {retrieval_output_file}")

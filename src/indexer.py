@@ -17,6 +17,6 @@ def build_index(input_file, output_model):
 
 if __name__ == "__main__":
     input_file = "D:\project\legal\data\processed\Shanghai_Enterprise_Compliance_Analysis_Upper_Level_Legal_Database_20240812.json"
-    output_model = "models/vectorizer_electricity_laws_20240730_2862.pkl"
+    output_model = "models/Shanghai_Enterprise_Compliance_Analysis_Upper_Level_Legal_Database_20240812"
     model = SentenceTransformer('moka-ai/m3e-base')
     build_index(input_file, output_model)
