@@ -50,6 +50,7 @@ def detect_conflicts(input_law, retrieved_laws):
     return results
 
 def process_single_document(doc_index, document, input_file, conflict_output_file, retrieval_output_file, re_model, model_file):
+    input = document
     input_law = document['content']
     
     start_time = time.time()
