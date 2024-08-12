@@ -52,6 +52,6 @@ def save_split_legal_items(input_file, output_file):
     print(f"拆分后的法律条目已保存为 {output_file}")
 
 if __name__ == "__main__":
-    input_file = r"D:\project\legal\data\raw_datasets\chinese law and regulations\electricity_laws_content.json"  # 输入文件路径
-    output_file = r"D:\project\legal\data\raw_datasets\chinese law and regulations\electricity_laws_content_split.json"  # 输出文件路径
+    input_file = r"D:\project\legal\data\raw_datasets\chinese law and regulations\Shanghai_Electric_Power_Company_Internal_Policy_Document.json"  # 输入文件路径
+    output_file = r"D:\project\legal\data\raw_datasets\chinese law and regulations\Shanghai_Electric_Power_Company_Internal_Policy_Document_split_20240812.json"  # 输出文件路径
     save_split_legal_items(input_file, output_file)
