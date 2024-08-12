@@ -117,10 +117,10 @@
                 $('#results').empty();
                 $('#timeTaken').hide();
                 $('#loadingSpinner').show(); // 显示加载器
-
+    
                 var getTimeElapsed = startTimer();
                 $('#timeTaken').show(); // 显示时间计数器
-
+    
                 var interval = setInterval(function() {
                     var timeElapsed = getTimeElapsed();
                     $('#elapsedTime').text(timeElapsed);
@@ -154,7 +154,8 @@
                                         '状态: ' + res.status + ' | ' +
                                         '发布日期: ' + res.publish_date + ' | ' +
                                         '生效日期: ' + res.effective_date + ' | ' +
-                                        '发布机构: ' + res.office + 
+                                        '发布机构: ' + res.office + ' | ' +
+                                        '相似度: ' + res.similarity +  // 添加相似度的显示
                                         '</small>' +
                                         '</div>';
                                 });

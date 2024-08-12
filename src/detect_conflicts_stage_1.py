@@ -44,7 +44,15 @@ def detect_conflicts(input_law, retrieved_laws):
                 "retrieved_index": index,
                 "retrieved_text": law['content'],
                 "label": label,
-                "confidence": confidence
+                "confidence": confidence,
+                "publish_date": law.get("publish_date", ""),
+                "effective_date": law.get("effective_date", ""),
+                "type": law.get("type", ""),
+                "status": law.get("status", ""),
+                "title": law.get("title", ""),
+                "office": law.get("office", ""),
+                "office_category": law.get("office_category", ""),
+                "effective_period": law.get("effective_period", "")
             }
             results.append(result)
     return results

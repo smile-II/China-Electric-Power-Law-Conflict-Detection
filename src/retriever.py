@@ -19,7 +19,13 @@ def calculate_similarities(embeddings, query_embedding):
 def sort_results(similarities, documents, top_k):
     start_time = time.time()
     top_k_indices = similarities.argsort()[-top_k:][::-1]
-    top_k_documents = [documents[idx] for idx in top_k_indices]
+    
+    # 将相似度转换为 Python 的 float 类型
+    top_k_documents = [
+        {**documents[idx], "similarity": float(similarities[idx])} 
+        for idx in top_k_indices
+    ]
+    
     sort_time = time.time() - start_time
     return top_k_documents, sort_time
 
@@ -43,11 +49,12 @@ def retrieve(query, model, model_file, data_file, top_k=20):
 
 if __name__ == "__main__":
     
-    query = "第三十八条 电力主管部门工作人员滥用职权、徇私舞弊的，由其单位或者上级主管部门给予行政处分。"  # 示例查询
+    query = "第三十一条  企业在来料加工、贴牌生产、委托加工时，企业知识产权管理部门应协助相关部门收集对方的相关知识产权信息，必要时应要求其提供相应的知识产权权属证明。\n\n企业应在合同中明确约定相应的知识产权权属、知识产权的许可使用范围、侵犯第三人知识产权时的责任承担等内容。"  # 示例查询
     re_model = SentenceTransformer('moka-ai/m3e-base')
-    model_file = "models/vectorizer_electricity_laws_20240730_2970.pkl"
+    model_file = "models/Shanghai_Enterprise_Compliance_Analysis_Upper_Level_Legal_Database_20240812"
     data_file = "data\processed\electricity_laws_20240730_2970.json"
     results, vectorize_time, similarity_time, sort_time = retrieve(query, re_model, model_file, data_file)
     for result in results:
         print(f"Title: {result['title']}")
-        print(f"Content: {result['content']}\n")
+        print(f"Content: {result['content']}")
+        print(f"Similarity: {result['similarity']}\n")
