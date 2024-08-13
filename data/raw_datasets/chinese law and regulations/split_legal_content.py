@@ -7,8 +7,8 @@ def split_legal_content(record):
     """
     content = record["content"]
     
-    # 按“第XX条”分割文本
-    split_text = re.split(r'(第[\d一二三四五六七八九十]+条(?:\s|\n))', content)
+    # 匹配第XX条，包括"第100条"及更大的数字
+    split_text = re.split(r'(第[\d零一二三四五六七八九十百千万]+条(?:\s|\n))', content)
 
     # 组合条款，使每个条款包含“第XX条”开头及其内容
     articles = []
