@@ -82,7 +82,7 @@ def process_single_document(doc_index, document, input_file, conflict_output_fil
                 "input_title":input["title"],
                 "input_content":input["content"],
                 "conflict_title": conflict["title"],
-                "input_content": conflict["retrieved_text"],
+                "conflict_content": conflict["retrieved_text"],
                 "confidence": conflict["confidence"]
             })
     
@@ -143,9 +143,12 @@ def process_documents(input_file, conflict_output_file, retrieval_output_file, r
                 print(f"文档索引 {doc_index} 处理失败: {e}")
 
 if __name__ == "__main__":
-    input_file = "D:\project\legal\data\processed\Shanghai_Electric_Power_Company_Internal_Policy_Document_20240812.json"
-    conflict_output_file = "output/Shanghai_Electric_Power_Company_Internal_Policy_Document/conflict_results_2.json"
-    retrieval_output_file = "output/Shanghai_Electric_Power_Company_Internal_Policy_Document/retrieval_results_2.json"
+    # input_file = r"D:\project\legal\data\raw_datasets\chinese law and regulations\国家电网有限公司财务管理通则_split.json"
+    # conflict_output_file = r"output\国家电网有限公司财务管理通则\conflict_results.json"
+    # retrieval_output_file = r"output\国家电网有限公司财务管理通则\retrieval_results.json"
+    input_file = r"D:\project\legal\data\raw_datasets\chinese law and regulations\上海电力股份有限公司董事会议事规则_split.json"
+    conflict_output_file = r"output\上海电力股份有限公司董事会议事规则\conflict_results.json"
+    retrieval_output_file = r"output\上海电力股份有限公司董事会议事规则\retrieval_results.json"
     model_file = "models/Shanghai_Enterprise_Compliance_Analysis_Upper_Level_Legal_Database_20240812"
     process_documents(input_file, conflict_output_file, retrieval_output_file, re_model, model_file)
     print(f"冲突检测结果已保存到 {conflict_output_file}")

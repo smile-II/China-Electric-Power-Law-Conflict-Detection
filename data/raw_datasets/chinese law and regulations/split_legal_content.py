@@ -8,6 +8,7 @@ def split_legal_content(record):
     content = record["content"]
     
     # 匹配第XX条，包括"第100条"及更大的数字
+    # split_text = re.split(r'(第[\d零一二三四五六七八九十百千万]+条(?:\s*|\n*))', content)
     split_text = re.split(r'(第[\d零一二三四五六七八九十百千万]+条(?:\s|\n))', content)
 
     # 组合条款，使每个条款包含“第XX条”开头及其内容
@@ -52,6 +53,6 @@ def save_split_legal_items(input_file, output_file):
     print(f"拆分后的法律条目已保存为 {output_file}")
 
 if __name__ == "__main__":
-    input_file = r"D:\project\legal\data\raw_datasets\chinese law and regulations\Shanghai_Electric_Power_Company_Internal_Policy_Document.json"  # 输入文件路径
-    output_file = r"D:\project\legal\data\raw_datasets\chinese law and regulations\Shanghai_Electric_Power_Company_Internal_Policy_Document_split_20240812.json"  # 输出文件路径
+    input_file = r"D:\project\legal\data\raw_datasets\chinese law and regulations\政策文件_20240813.json"  # 输入文件路径
+    output_file = r"D:\project\legal\data\raw_datasets\chinese law and regulations\政策文件_20240813_111.json"  # 输出文件路径
     save_split_legal_items(input_file, output_file)
