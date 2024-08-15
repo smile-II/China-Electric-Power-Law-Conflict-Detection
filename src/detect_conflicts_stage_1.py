@@ -21,14 +21,22 @@ print("模型加载完成")
 # 定义标签，仅包括“法律文本冲突”和“法律文本不冲突”
 label_map = {0: '法律文本冲突', 1: '法律文本不冲突', 2: '法律文本不冲突'}
 
-def predict_conflict(text1, text2):
-    inputs = tokenizer.encode_plus(text1, text2, return_tensors='pt', truncation=True)
-    inputs = {key: value.to(device) for key, value in inputs.items()}
+def predict_conflict(text1, text2, max_length=512):
+    # 使用 truncation=True 和 max_length 来确保输入不超过512个token
+    inputs = tokenizer.encode_plus(
+        text1, 
+        text2, 
+        return_tensors='pt', 
+        truncation=True, 
+        max_length=max_length
+    )
+    
+    inputs = {key: value.to(device) for key, value in inputs.items()} 
     with torch.no_grad():
         outputs = model(**inputs)
     logits = outputs.logits
     predicted_label = torch.argmax(logits, dim=1).item()
-    confidence = torch.softmax(logits, dim=1)[0][predicted_label].item()
+    confidence = torch.softmax(logits, dim=1)[0][predicted_label].item() 
     return label_map[predicted_label], confidence
 
 def detect_conflicts(input_law, retrieved_laws):
@@ -146,9 +154,9 @@ if __name__ == "__main__":
     # input_file = r"D:\project\legal\data\raw_datasets\chinese law and regulations\国家电网有限公司财务管理通则_split.json"
     # conflict_output_file = r"output\国家电网有限公司财务管理通则\conflict_results.json"
     # retrieval_output_file = r"output\国家电网有限公司财务管理通则\retrieval_results.json"
-    input_file = r"D:\project\legal\data\raw_datasets\chinese law and regulations\上海电力股份有限公司董事会议事规则_split.json"
-    conflict_output_file = r"output\上海电力股份有限公司董事会议事规则\conflict_results.json"
-    retrieval_output_file = r"output\上海电力股份有限公司董事会议事规则\retrieval_results.json"
+    input_file = r"D:\project\legal\data\raw_datasets\chinese law and regulations\政策文件_20240813_split.json"
+    conflict_output_file = r"output\政策文件_20240813\conflict_results_1.json"
+    retrieval_output_file = r"output\政策文件_20240813\retrieval_results_1.json"
     model_file = "models/Shanghai_Enterprise_Compliance_Analysis_Upper_Level_Legal_Database_20240812"
     process_documents(input_file, conflict_output_file, retrieval_output_file, re_model, model_file)
     print(f"冲突检测结果已保存到 {conflict_output_file}")
