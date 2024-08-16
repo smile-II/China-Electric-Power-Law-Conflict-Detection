@@ -1,5 +1,5 @@
 *.log
 config/settings.yml
-models/*.pkl
+models/
 data/raw_datasets/
 data/processed/
