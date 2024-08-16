@@ -5,7 +5,7 @@ from tqdm import tqdm
 import concurrent.futures
 import yaml
 # 加载 YAML 配置文件
-with open("config/settings.yml", 'r') as file:
+with open("D:\project\legal\config\seeting.yml", 'r') as file:
     config = yaml.safe_load(file)
 # 访问 secret_key
 secret_key = config['secret_key']
@@ -105,5 +105,5 @@ def main(input_json_path, output_json_path):
 
 if __name__ == "__main__":
     input_json_path = r'D:\project\legal\output\政策文件_20240813\conflict_results_1.json'  # 输入 JSON 文件路径
-    output_json_path = r'D:\project\legal\output\政策文件_20240813\conflict_results_1_stage2-4.json'  # 输出 JSON 文件路径
+    output_json_path = r'D:\project\legal\output\政策文件_20240813\conflict_results_1_stage2-5.json'  # 输出 JSON 文件路径
     main(input_json_path, output_json_path)
