@@ -3,9 +3,15 @@ import json
 from openai import OpenAI
 from tqdm import tqdm 
 import concurrent.futures
+import yaml
+# 加载 YAML 配置文件
+with open("config/settings.yml", 'r') as file:
+    config = yaml.safe_load(file)
+# 访问 secret_key
+secret_key = config['secret_key']
 
 # 配置 OpenAI API
-client = OpenAI(api_key="sk-210cdb196c744a5c8596105ebc7d3184", base_url="https://api.deepseek.com")
+client = OpenAI(api_key=secret_key, base_url="https://api.deepseek.com")
 
 def chat_with_model(input_text, temperature=1):
     response = client.chat.completions.create(
@@ -32,7 +38,8 @@ def process_entry(entry):
     retrieved_text = entry['conflict_title'] + "\n" + entry['conflict_content']
 
     # 定义prompt
-    prompt = f"""
+    prompt = f"你是一个处理企业合规性的法律专家,请对企业合规性进行分析，分析是否存在法律逻辑上的冲突? 这是企业文本：\n{input_text} 这是法律文本\n{retrieved_text}\n\n##请回答：A：法律文本冲突  B：法律文本不冲突\n##请一步一步思考，然后输出选项A或者B"
+    # prompt = f"""
 #上下文：你是一个处理企业合规性的法律专家，企业合规性是指企业在其运营和管理过程中，遵守所有适用的法律、法规、行业标准、内部政策以及道德规范的程度。企业合规性的核心目标是确保企业的行为不仅合法，而且符合道德和社会责任的要求，以维护企业的声誉，避免法律风险和经济损失，并促进企业的可持续发展。为了实现这一目标，企业通常会建立并维护一套合规管理体系，涵盖政策制定、合规培训、监控审计、以及违规行为的报告与处理等环节。
 
 #目标：下面请你帮助我进行企业合规性分析。我会给你两段文本，一段是企业规定文本，一段是法律文本，帮助我分析企业规定是否符合法律规定。
@@ -45,11 +52,8 @@ def process_entry(entry):
 
 #输出：请一步一步思考，输出合规性分析的内容。并且在选项 A：法律文本冲突  B：法律文本不冲突 \n 选择选项A或者B。
 
-请你对下面两段文本进行企业合规性分析:
-{input_text}
-
-{retrieved_text}
-"""
+#请你对下面两段文本进行企业合规性分析: 企业文本：{input_text}  法律文本：{retrieved_text}
+# """
 
     # 调用API获取回答
     answer = chat_with_model(prompt)
@@ -61,9 +65,9 @@ def process_entry(entry):
     return {
         "doc_index": entry['doc_index'],
         "input_title": entry['input_title'],
-        "input_content": input_text,
+        "input_content": entry['input_content'],
         "conflict_title": entry['conflict_title'],
-        "conflict_content": retrieved_text,
+        "conflict_content": entry['conflict_content'],
         "confidence": entry['confidence'],
         "answer":answer,
         "result": predicted_option
@@ -101,5 +105,5 @@ def main(input_json_path, output_json_path):
 
 if __name__ == "__main__":
     input_json_path = r'D:\project\legal\output\政策文件_20240813\conflict_results_1.json'  # 输入 JSON 文件路径
-    output_json_path = r'D:\project\legal\output\政策文件_20240813\conflict_results_1_stage2-2.json'  # 输出 JSON 文件路径
+    output_json_path = r'D:\project\legal\output\政策文件_20240813\conflict_results_1_stage2-4.json'  # 输出 JSON 文件路径
     main(input_json_path, output_json_path)
