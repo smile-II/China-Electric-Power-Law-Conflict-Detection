@@ -1,3 +1,4 @@
 *.log
 config/settings.yml
 models/*.pkl
+data/raw_datasets/
